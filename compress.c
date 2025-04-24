@@ -615,7 +615,9 @@ void BZ2_compressBlock ( EState* s, Bool is_last_block )
       BZ2_blockSort ( s );
    }
 
-   s->zbits = (UChar*) (&((UChar*)s->arr2)[s->nblock]);
+   UChar *arr2_8 = scylla_u8_of_u32(s->arr2);
+
+   s->zbits = &arr2_8[s->nblock];
 
    /*-- If this is the first block, create the stream header. --*/
    if (s->blockNo == 1) {

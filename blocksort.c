@@ -220,7 +220,7 @@ void fallbackSort ( UInt32* fmap,
    Int32 H, i, j, k, l, r, cc, cc1;
    Int32 nNotDone;
    Int32 nBhtab;
-   UChar* eclass8 = (UChar*)eclass;
+   UChar* eclass8 = scylla_u8_of_u32(eclass);
 
    /*--
       Initial 1-char radix sort to generate
