@@ -22,8 +22,8 @@ pub fn BZ2_compressBlock(s: &mut [crate::bzlib_private::EState], is_last_block: 
     if (s[0usize]).verbosity >= 2i32 { () };
     crate::blocksort::BZ2_blockSort(s)
   };
-  let arr2_8: &[u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
-  (s[0usize]).zbits = &arr2_8[(s[0usize]).nblock as usize..];
+  let arr2_8: &mut [u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
+  (s[0usize]).zbits = &mut arr2_8[(s[0usize]).nblock as usize..];
   if (s[0usize]).blockNo == 1i32
   {
     BZ2_bsInitWrite(s);
@@ -419,7 +419,11 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
             let mut cost23: u32;
             let mut cost45: u32;
             let mut icv: u16;
-            cost01 = (cost23 = (cost45 = 0u32) as u32) as u32;
+            {
+              cost01 = 0u32;
+              cost23 = 0u32;
+              cost45 = 0u32
+            };
             icv = mtfv[gs.wrapping_add(0i32) as usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);

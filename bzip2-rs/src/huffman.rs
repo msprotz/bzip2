@@ -248,7 +248,10 @@ pub fn BZ2_hbMakeCodeLengths(len: &mut [u8], freq: &[i32], alphaSize: i32, maxLe
         heap[zz as usize] = tmp
       };
       nNodes = nNodes.wrapping_add(1i32);
-      parent[n1 as usize] = (parent[n2 as usize] = nNodes) as i32;
+      {
+        parent[n1 as usize] = nNodes;
+        parent[n2 as usize] = nNodes
+      };
       weight[nNodes as usize] =
           (weight[n1 as usize] & 4294967040i32).wrapping_add(weight[n2 as usize] & 4294967040i32)
           |

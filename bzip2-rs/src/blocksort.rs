@@ -93,8 +93,14 @@ pub fn fallbackQSort3(fmap: &mut [u32], eclass: &[u32], loSt: i32, hiSt: i32)
     { med = eclass[fmap[lo.wrapping_add(hi).wrapping_shr(1u32) as usize] as usize] }
     else
     { med = eclass[fmap[hi as usize] as usize] };
-    unLo = (ltLo = lo) as i32;
-    unHi = (gtHi = hi) as i32;
+    {
+      unLo = lo;
+      ltLo = lo
+    };
+    {
+      unHi = hi;
+      gtHi = hi
+    };
     while
     true
     {
@@ -771,8 +777,14 @@ pub fn mainQSort3(
         )
         as
         i32;
-    unLo = (ltLo = lo) as i32;
-    unHi = (gtHi = hi) as i32;
+    {
+      unLo = lo;
+      ltLo = lo
+    };
+    {
+      unHi = hi;
+      gtHi = hi
+    };
     while
     1i32 as u8 != 0u8
     {
