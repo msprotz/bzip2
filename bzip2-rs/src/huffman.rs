@@ -149,9 +149,9 @@ pub fn BZ2_hbMakeCodeLengths(len: &mut [u8], freq: &[i32], alphaSize: i32, maxLe
   let mut j: i32;
   let mut k: i32;
   let mut tooLong: u8;
-  let mut heap: [i32; 260] = Default::default();
-  let mut weight: [i32; 516] = Default::default();
-  let mut parent: [i32; 516] = Default::default();
+  let mut heap: [i32; 260] = [0i32; 260usize];
+  let mut weight: [i32; 516] = [0i32; 516usize];
+  let mut parent: [i32; 516] = [0i32; 516usize];
   {
     i = 0i32;
     while

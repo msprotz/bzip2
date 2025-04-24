@@ -27,6 +27,7 @@
 */
 
 #include "bzlib_private.h"
+#include "scylla_glue.h"
 
 
 /*---------------------------------------------------*/
@@ -125,6 +126,8 @@ void generateMTFValues ( EState* s )
    Int32   wr;
    Int32   EOB;
 
+   makeMaps_e ( s );
+
    /*
       After sorting (eg, here),
          s->arr1 [ 0 .. s->nblock-1 ] holds sorted order,
@@ -151,7 +154,6 @@ void generateMTFValues ( EState* s )
    UChar* block  = s->block;
    UInt16* mtfv  = s->mtfv;
 
-   makeMaps_e ( s );
    EOB = s->nInUse+1;
 
    for (i = 0; i <= EOB; i++) s->mtfFreq[i] = 0;

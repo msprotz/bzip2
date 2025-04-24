@@ -42,13 +42,6 @@ typedef unsigned int    UInt32;
 typedef short           Int16;
 typedef unsigned short  UInt16;
 
-__attribute__((annotate("scylla_opaque")))
-__attribute__((annotate("scylla_mutability(mut)")))
-static inline UChar *scylla_u8_of_u32(UInt32 *src) {
-  return (UChar *)src;
-}
-
-
 #define True  ((Bool)1)
 #define False ((Bool)0)
 

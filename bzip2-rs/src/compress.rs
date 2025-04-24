@@ -22,7 +22,7 @@ pub fn BZ2_compressBlock(s: &mut [crate::bzlib_private::EState], is_last_block: 
     if (s[0usize]).verbosity >= 2i32 { () };
     crate::blocksort::BZ2_blockSort(s)
   };
-  let arr2_8: &[u8] = crate::bzlib_private::scylla_u8_of_u32((s[0usize]).arr2);
+  let arr2_8: &[u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
   (s[0usize]).zbits = &arr2_8[(s[0usize]).nblock as usize..];
   if (s[0usize]).blockNo == 1i32
   {
@@ -99,16 +99,16 @@ pub fn bsPutUInt32(s: &mut [crate::bzlib_private::EState], u: u32)
 
 pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
 {
-  let mut yy: [u8; 256] = Default::default();
+  let mut yy: [u8; 256] = [0u8; 256usize];
   let mut i: i32;
   let mut j: i32;
   let mut zPend: i32;
   let mut wr: i32;
   let mut EOB: i32;
+  makeMaps_e(s);
   let ptr: &[u32] = (s[0usize]).ptr;
   let block: &[u8] = (s[0usize]).block;
   let mtfv: &mut [u16] = (s[0usize]).mtfv;
-  makeMaps_e(s);
   EOB = (s[0usize]).nInUse.wrapping_add(1i32);
   {
     i = 0i32;
@@ -259,8 +259,8 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
   let mut selCtr: i32;
   let mut nGroups: i32;
   let mut nBytes: i32;
-  let mut cost: [u16; 6] = Default::default();
-  let mut fave: [i32; 6] = Default::default();
+  let mut cost: [u16; 6] = [0u16; 6usize];
+  let mut fave: [i32; 6] = [0i32; 6usize];
   let mtfv: &[u16] = (s[0usize]).mtfv;
   if (s[0usize]).verbosity >= 3i32 { () };
   alphaSize = (s[0usize]).nInUse.wrapping_add(2i32);

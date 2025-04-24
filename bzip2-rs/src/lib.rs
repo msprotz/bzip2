@@ -1,3 +1,5 @@
+pub mod bzlib;
+pub mod scylla_glue;
 pub mod bzlib_private;
 pub mod blocksort;
 pub mod huffman;

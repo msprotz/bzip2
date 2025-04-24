@@ -20,6 +20,7 @@
 
 
 #include "bzlib_private.h"
+#include "scylla_glue.h"
 
 /*---------------------------------------------*/
 /*--- Fallback O(N log(N)^2) sorting        ---*/

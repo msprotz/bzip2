@@ -27,7 +27,7 @@ pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
     if wfact > 100i32 { wfact = 100i32 };
     budgetInit = nblock.wrapping_mul(wfact.wrapping_sub(1i32).wrapping_div(3i32));
     budget = budgetInit;
-    mainSort(ptr, block, quadrant, ftab, nblock, verb, std::slice::from_slice::<i32>(&budget));
+    mainSort(ptr, block, quadrant, ftab, nblock, verb, std::slice::from_ref::<i32>(&budget));
     if verb >= 3i32 { () };
     if budget < 0i32
     {
@@ -63,8 +63,8 @@ pub fn fallbackQSort3(fmap: &mut [u32], eclass: &[u32], loSt: i32, hiSt: i32)
   let mut med: u32;
   let mut r: u32;
   let mut r3: u32;
-  let mut stackLo: [i32; 100] = Default::default();
-  let mut stackHi: [i32; 100] = Default::default();
+  let mut stackLo: [i32; 100] = [0i32; 100usize];
+  let mut stackHi: [i32; 100] = [0i32; 100usize];
   r = 0u32;
   sp = 0i32;
   {
@@ -277,8 +277,8 @@ pub fn fallbackSort(
   verb: i32
 )
 {
-  let mut ftab: [i32; 257] = Default::default();
-  let mut ftabCopy: [i32; 256] = Default::default();
+  let mut ftab: [i32; 257] = [0i32; 257usize];
+  let mut ftabCopy: [i32; 256] = [0i32; 256usize];
   let mut H: i32;
   let mut i: i32;
   let mut j: i32;
@@ -289,7 +289,7 @@ pub fn fallbackSort(
   let mut cc1: i32;
   let mut nNotDone: i32;
   let mut nBhtab: i32;
-  let eclass8: &mut [u8] = crate::bzlib_private::scylla_u8_of_u32(eclass);
+  let eclass8: &mut [u8] = crate::scylla_glue::scylla_u8_of_u32(eclass);
   if verb >= 4i32 { () };
   {
     i = 0i32;
@@ -733,12 +733,12 @@ pub fn mainQSort3(
   let mut lo: i32;
   let mut hi: i32;
   let mut d: i32;
-  let mut stackLo: [i32; 100] = Default::default();
-  let mut stackHi: [i32; 100] = Default::default();
-  let mut stackD: [i32; 100] = Default::default();
-  let mut nextLo: [i32; 3] = Default::default();
-  let mut nextHi: [i32; 3] = Default::default();
-  let mut nextD: [i32; 3] = Default::default();
+  let mut stackLo: [i32; 100] = [0i32; 100usize];
+  let mut stackHi: [i32; 100] = [0i32; 100usize];
+  let mut stackD: [i32; 100] = [0i32; 100usize];
+  let mut nextLo: [i32; 3] = [0i32; 3usize];
+  let mut nextHi: [i32; 3] = [0i32; 3usize];
+  let mut nextD: [i32; 3] = [0i32; 3usize];
   sp = 0i32;
   {
     stackLo[sp as usize] = loSt;
@@ -1065,10 +1065,10 @@ pub fn mainSort(
   let mut k: i32;
   let mut ss: i32;
   let mut sb: i32;
-  let mut runningOrder: [i32; 256] = Default::default();
-  let mut bigDone: [u8; 256] = Default::default();
-  let mut copyStart: [i32; 256] = Default::default();
-  let mut copyEnd: [i32; 256] = Default::default();
+  let mut runningOrder: [i32; 256] = [0i32; 256usize];
+  let mut bigDone: [u8; 256] = [0u8; 256usize];
+  let mut copyStart: [i32; 256] = [0i32; 256usize];
+  let mut copyEnd: [i32; 256] = [0i32; 256usize];
   let mut c1: u8;
   let mut numQSorted: i32;
   let mut s: u16;
