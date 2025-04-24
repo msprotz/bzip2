@@ -188,21 +188,21 @@ void generateMTFValues ( EState* s )
          }
          {
             register UChar  rtmp;
-            register UChar* ryy_j;
+            size_t yy_j;
             register UChar  rll_i;
             rtmp  = yy[1];
             yy[1] = yy[0];
-            ryy_j = &(yy[1]);
+            yy_j = 1;
             rll_i = ll_i;
             while ( rll_i != rtmp ) {
                register UChar rtmp2;
-               ryy_j++;
+               yy_j++;
                rtmp2  = rtmp;
-               rtmp   = *ryy_j;
-               *ryy_j = rtmp2;
+               rtmp   = yy[yy_j];
+               yy[yy_j] = rtmp2;
             };
             yy[0] = rtmp;
-            j = ryy_j - &(yy[0]);
+            j = yy_j;
             mtfv[wr] = j+1; wr++; s->mtfFreq[j+1]++;
          }
 

@@ -54,8 +54,12 @@ typedef unsigned short  UInt16;
 #ifndef BZ_NO_STDIO
 
 extern void BZ2_bz__AssertH__fail ( int errcode );
+#ifndef SCYLLA
 #define AssertH(cond,errcode) \
    { if (!(cond)) BZ2_bz__AssertH__fail ( errcode ); }
+#else
+#define AssertH(cond,errcode) {}
+#endif
 
 #if BZ_DEBUG
 #define AssertD(cond,msg) \
@@ -68,6 +72,7 @@ extern void BZ2_bz__AssertH__fail ( int errcode );
 #define AssertD(cond,msg) /* */
 #endif
 
+#ifndef SCYLLA
 #define VPrintf0(zf) \
    fprintf(stderr,zf)
 #define VPrintf1(zf,za1) \
@@ -80,6 +85,20 @@ extern void BZ2_bz__AssertH__fail ( int errcode );
    fprintf(stderr,zf,za1,za2,za3,za4)
 #define VPrintf5(zf,za1,za2,za3,za4,za5) \
    fprintf(stderr,zf,za1,za2,za3,za4,za5)
+#else
+#define VPrintf0(zf) \
+  {}
+#define VPrintf1(zf,za1) \
+  {}
+#define VPrintf2(zf,za1,za2) \
+  {}
+#define VPrintf3(zf,za1,za2,za3) \
+  {}
+#define VPrintf4(zf,za1,za2,za3,za4) \
+  {}
+#define VPrintf5(zf,za1,za2,za3,za4,za5) \
+  {}
+#endif
 
 #else
 
@@ -192,7 +211,7 @@ extern UInt32 BZ2_crc32Table[256];
 /*-- Structure holding all the compression-side stuff. --*/
 
 typedef
-   struct {
+   struct estate_s {
       /* pointer back to the struct bz_stream */
       bz_stream* strm;
 
@@ -343,7 +362,7 @@ BZ2_hbMakeCodeLengths ( UChar*, Int32*, Int32, Int32 );
 /*-- Structure holding all the decompression-side stuff. --*/
 
 typedef
-   struct {
+   struct dstate_s {
       /* pointer back to the struct bz_stream */
       bz_stream* strm;
 

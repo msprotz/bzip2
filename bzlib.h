@@ -46,7 +46,7 @@ extern "C" {
 #define BZ_CONFIG_ERROR      (-9)
 
 typedef
-   struct {
+   struct _bz_stream {
       char *next_in;
       unsigned int avail_in;
       unsigned int total_in_lo32;
