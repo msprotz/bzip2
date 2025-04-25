@@ -203,9 +203,6 @@ extern UInt32 BZ2_crc32Table[256];
 #define BZ_N_SHELL 18
 #define BZ_N_OVERSHOOT (BZ_N_RADIX + BZ_N_QSORT + BZ_N_SHELL + 2)
 
-
-
-
 /*-- Structure holding all the compression-side stuff. --*/
 
 typedef
@@ -231,7 +228,10 @@ typedef
       UInt32*  ptr;
       UChar*   block;
       UInt16*  mtfv;
-      UChar*   zbits;
+
+      // SCYLLA: an index, in bytes, into arr2 seen as an array of bytes (was previously an alias)
+      // UChar*   zbits;
+      size_t zbits_ofs;
 
       /* for deciding when to use the fallback sorting algorithm */
       Int32    workFactor;

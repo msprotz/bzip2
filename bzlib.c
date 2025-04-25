@@ -30,6 +30,7 @@
 
 #include "bzlib_private.h"
 #include "bz_version.h"
+#include "scylla_glue.h"
 
 
 /*---------------------------------------------------*/
@@ -199,7 +200,7 @@ int BZ_API(BZ2_bzCompressInit)
 
    s->block             = (UChar*)s->arr2;
    s->mtfv              = (UInt16*)s->arr1;
-   s->zbits             = NULL;
+   s->zbits_ofs         = 0;
    s->ptr               = (UInt32*)s->arr1;
 
    strm->state          = s;
@@ -346,7 +347,7 @@ Bool copy_output_until_stop ( EState* s )
       if (s->state_out_pos >= s->numZ) break;
 
       progress_out = True;
-      *(s->strm->next_out) = s->zbits[s->state_out_pos];
+      *(s->strm->next_out) = ZBITS_READ(s, s->state_out_pos);
       s->state_out_pos++;
       s->strm->avail_out--;
       s->strm->next_out++;

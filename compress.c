@@ -47,7 +47,7 @@ static
 void bsFinishWrite ( EState* s )
 {
    while (s->bsLive > 0) {
-      s->zbits[s->numZ] = (UChar)(s->bsBuff >> 24);
+      ZBITS_WRITE(s, s->numZ, (UChar)(s->bsBuff >> 24));
       s->numZ++;
       s->bsBuff <<= 8;
       s->bsLive -= 8;
@@ -59,8 +59,7 @@ void bsFinishWrite ( EState* s )
 #define bsNEEDW(nz)                           \
 {                                             \
    while (s->bsLive >= 8) {                   \
-      s->zbits[s->numZ]                       \
-         = (UChar)(s->bsBuff >> 24);          \
+     ZBITS_WRITE(s, s->numZ, (UChar)(s->bsBuff >> 24)); \
       s->numZ++;                              \
       s->bsBuff <<= 8;                        \
       s->bsLive -= 8;                         \
@@ -617,9 +616,8 @@ void BZ2_compressBlock ( EState* s, Bool is_last_block )
       BZ2_blockSort ( s );
    }
 
-   UChar *arr2_8 = scylla_u8_of_u32(s->arr2);
-
-   s->zbits = &arr2_8[s->nblock];
+   // SCYLLA: is this ever written to afterwards?+
+   s->zbits_ofs = s->nblock;
 
    /*-- If this is the first block, create the stream header. --*/
    if (s->blockNo == 1) {

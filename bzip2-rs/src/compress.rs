@@ -23,8 +23,7 @@ pub fn BZ2_compressBlock(s: &mut [crate::bzlib_private::EState], is_last_block: 
     if (s[0usize]).verbosity >= 2i32 { () };
     crate::blocksort::BZ2_blockSort(s)
   };
-  let arr2_8: &[u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
-  (s[0usize]).zbits = &arr2_8[(s[0usize]).nblock as usize..];
+  (s[0usize]).zbits_ofs = (s[0usize]).nblock as usize;
   if (s[0usize]).blockNo == 1i32
   {
     BZ2_bsInitWrite(s);
@@ -66,7 +65,9 @@ pub fn bsFinishWrite(s: &mut [crate::bzlib_private::EState])
   while
   (s[0usize]).bsLive > 0i32
   {
-    (s[0usize]).zbits[(s[0usize]).numZ as usize] = (s[0usize]).bsBuff.wrapping_shr(24u32) as u8;
+    let zbits: &mut [u8] =
+        &mut crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2)[(s[0usize]).zbits_ofs..];
+    zbits[(s[0usize]).numZ as usize] = (s[0usize]).bsBuff.wrapping_shr(24u32) as u8;
     (s[0usize]).numZ = (s[0usize]).numZ.wrapping_add(1i32);
     (s[0usize]).bsBuff = (s[0usize]).bsBuff.wrapping_shl(8u32);
     (s[0usize]).bsLive = (s[0usize]).bsLive.wrapping_sub(8i32)
@@ -88,7 +89,9 @@ pub fn bsPutUInt32(s: &mut [crate::bzlib_private::EState], u: u32)
   while
   (s[0usize]).bsLive >= 8i32
   {
-    (s[0usize]).zbits[(s[0usize]).numZ as usize] = (s[0usize]).bsBuff.wrapping_shr(24u32) as u8;
+    let zbits: &mut [u8] =
+        &mut crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2)[(s[0usize]).zbits_ofs..];
+    zbits[(s[0usize]).numZ as usize] = (s[0usize]).bsBuff.wrapping_shr(24u32) as u8;
     (s[0usize]).numZ = (s[0usize]).numZ.wrapping_add(1i32);
     (s[0usize]).bsBuff = (s[0usize]).bsBuff.wrapping_shl(8u32);
     (s[0usize]).bsLive = (s[0usize]).bsLive.wrapping_sub(8i32)
