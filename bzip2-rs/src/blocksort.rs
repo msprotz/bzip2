@@ -3,6 +3,7 @@
 #![allow(non_camel_case_types)]
 #![allow(unused_assignments)]
 #![allow(unreachable_patterns)]
+#![allow(unused_mut)]
 
 pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
 {
@@ -12,7 +13,6 @@ pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
   let nblock: i32 = (s[0usize]).nblock;
   let verb: i32 = (s[0usize]).verbosity;
   let mut wfact: i32 = (s[0usize]).workFactor;
-  let mut quadrant: &mut [u16] = Default::default();
   let mut budget: i32;
   let mut budgetInit: i32;
   let mut i: i32;
@@ -22,12 +22,21 @@ pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
   {
     i = nblock.wrapping_add(2i32.wrapping_add(12i32).wrapping_add(18i32).wrapping_add(2i32));
     if i & 1i32 != 0i32 { i = i.wrapping_add(1i32) };
-    quadrant = &mut block[i as usize..];
+    let block_: (&mut [u8], &mut [u8]) = block.split_at_mut(0usize);
+    let quadrant_: (&mut [u8], &mut [u8]) = block_.1.split_at_mut(i as usize);
     if wfact < 1i32 { wfact = 1i32 };
     if wfact > 100i32 { wfact = 100i32 };
     budgetInit = nblock.wrapping_mul(wfact.wrapping_sub(1i32).wrapping_div(3i32));
     budget = budgetInit;
-    mainSort(ptr, block, quadrant, ftab, nblock, verb, std::slice::from_ref::<i32>(&budget));
+    mainSort(
+      ptr,
+      quadrant_.0,
+      crate::scylla_glue::scylla_u16_of_u8(quadrant_.1),
+      ftab,
+      nblock,
+      verb,
+      std::slice::from_mut::<i32>(&mut budget)
+    );
     if verb >= 3i32 { () };
     if budget < 0i32
     {
@@ -101,11 +110,9 @@ pub fn fallbackQSort3(fmap: &mut [u32], eclass: &[u32], loSt: i32, hiSt: i32)
       unHi = hi;
       gtHi = hi
     };
-    while
-    true
+    loop
     {
-      while
-      true
+      loop
       {
         if unLo > unHi { break };
         n = (eclass[fmap[unLo as usize] as usize] as i32).wrapping_sub(med as i32);
@@ -123,8 +130,7 @@ pub fn fallbackQSort3(fmap: &mut [u32], eclass: &[u32], loSt: i32, hiSt: i32)
         if n > 0i32 { break };
         unLo = unLo.wrapping_add(1i32)
       };
-      while
-      true
+      loop
       {
         if unLo > unHi { break };
         n = (eclass[fmap[unHi as usize] as usize] as i32).wrapping_sub(med as i32);
@@ -295,7 +301,7 @@ pub fn fallbackSort(
   let mut cc1: i32;
   let mut nNotDone: i32;
   let mut nBhtab: i32;
-  let eclass8: &mut [u8] = crate::scylla_glue::scylla_u8_of_u32(eclass);
+  let eclass8: &[u8] = crate::scylla_glue::scylla_u8_of_u32(eclass);
   if verb >= 4i32 { () };
   {
     i = 0i32;
@@ -387,8 +393,7 @@ pub fn fallbackSort(
     }
   };
   H = 1i32;
-  while
-  true
+  loop
   {
     if verb >= 4i32 { () };
     j = 0i32;
@@ -412,8 +417,7 @@ pub fn fallbackSort(
     };
     nNotDone = 0i32;
     r = 0i32.wrapping_sub(1i32);
-    while
-    true
+    loop
     {
       k = r.wrapping_add(1i32);
       while
@@ -482,9 +486,10 @@ pub fn fallbackSort(
   i < nblock
   {
     {
+      let eclass80: &mut [u8] = crate::scylla_glue::scylla_u8_of_u32(eclass);
       while ftabCopy[j as usize] == 0i32 { j = j.wrapping_add(1i32) };
       ftabCopy[j as usize] = (ftabCopy[j as usize]).wrapping_sub(1i32);
-      eclass8[fmap[i as usize] as usize] = j as u8
+      eclass80[fmap[i as usize] as usize] = j as u8
     };
     i = i.wrapping_add(1i32)
   }
@@ -725,7 +730,7 @@ pub fn mainQSort3(
   loSt: i32,
   hiSt: i32,
   dSt: i32,
-  budget: &[i32]
+  budget: &mut [i32]
 )
 {
   let mut unLo: i32;
@@ -903,8 +908,7 @@ pub fn mainQSort3(
     if
     (nextHi[0usize]).wrapping_sub(nextLo[0usize]) < (nextHi[1usize]).wrapping_sub(nextLo[1usize])
     {
-      let mut tz: i32;
-      tz = nextLo[0usize];
+      let mut tz: i32 = nextLo[0usize];
       nextLo[0usize] = nextLo[1usize];
       nextLo[1usize] = tz;
       tz = nextHi[0usize];
@@ -917,8 +921,7 @@ pub fn mainQSort3(
     if
     (nextHi[1usize]).wrapping_sub(nextLo[1usize]) < (nextHi[2usize]).wrapping_sub(nextLo[2usize])
     {
-      let mut tz: i32;
-      tz = nextLo[1usize];
+      let mut tz: i32 = nextLo[1usize];
       nextLo[1usize] = nextLo[2usize];
       nextLo[2usize] = tz;
       tz = nextHi[1usize];
@@ -931,8 +934,7 @@ pub fn mainQSort3(
     if
     (nextHi[0usize]).wrapping_sub(nextLo[0usize]) < (nextHi[1usize]).wrapping_sub(nextLo[1usize])
     {
-      let mut tz: i32;
-      tz = nextLo[0usize];
+      let mut tz: i32 = nextLo[0usize];
       nextLo[0usize] = nextLo[1usize];
       nextLo[1usize] = tz;
       tz = nextHi[0usize];
@@ -969,7 +971,7 @@ pub fn mainSimpleSort(
   lo: i32,
   hi: i32,
   d: i32,
-  budget: &[i32]
+  budget: &mut [i32]
 )
 {
   let mut i: i32;
@@ -1069,7 +1071,7 @@ pub fn mainSort(
   ftab: &mut [u32],
   nblock: i32,
   verb: i32,
-  budget: &[i32]
+  budget: &mut [i32]
 )
 {
   let mut i: i32;
@@ -1352,7 +1354,10 @@ pub fn mainSort(
                 c1 = block[k as usize];
                 if bigDone[c1 as usize] == 0u8
                 {
-                  ptr[(copyStart[c1 as usize] = (copyStart[c1 as usize]).wrapping_add(1i32))
+                  ptr[{
+                    copyStart[c1 as usize] = (copyStart[c1 as usize]).wrapping_add(1i32);
+                    copyStart[c1 as usize]
+                  }
                   as
                   usize] =
                       k as u32
@@ -1376,7 +1381,12 @@ pub fn mainSort(
               c1 = block[k as usize];
               if bigDone[c1 as usize] == 0u8
               {
-                ptr[(copyEnd[c1 as usize] = (copyEnd[c1 as usize]).wrapping_sub(1i32)) as usize] =
+                ptr[{
+                  copyEnd[c1 as usize] = (copyEnd[c1 as usize]).wrapping_sub(1i32);
+                  copyEnd[c1 as usize]
+                }
+                as
+                usize] =
                     k as u32
               }
             };

@@ -321,7 +321,9 @@ void fallbackSort ( UInt32* fmap,
    if (verb >= 4)
       VPrintf0 ( "        reconstructing block ...\n" );
    j = 0;
+
    for (i = 0; i < nblock; i++) {
+     UChar* eclass8 = scylla_u8_of_u32(eclass);
       while (ftabCopy[j] == 0) j++;
       ftabCopy[j]--;
       eclass8[fmap[i]] = (UChar)j;
@@ -1036,7 +1038,6 @@ void BZ2_blockSort ( EState* s )
    Int32   nblock = s->nblock;
    Int32   verb   = s->verbosity;
    Int32   wfact  = s->workFactor;
-   UInt16* quadrant;
    Int32   budget;
    Int32   budgetInit;
    Int32   i;
@@ -1051,7 +1052,9 @@ void BZ2_blockSort ( EState* s )
       */
       i = nblock+BZ_N_OVERSHOOT;
       if (i & 1) i++;
-      quadrant = (UInt16*)(&(block[i]));
+      UChar *block_ = block + 0;
+      UChar *quadrant_ = block + i;
+      ;
 
       /* (wfact-1) / 3 puts the default-factor-30
          transition point at very roughly the same place as
@@ -1065,7 +1068,7 @@ void BZ2_blockSort ( EState* s )
       budgetInit = nblock * ((wfact-1) / 3);
       budget = budgetInit;
 
-      mainSort ( ptr, block, quadrant, ftab, nblock, verb, &budget );
+      mainSort ( ptr, block_, scylla_u16_of_u8(quadrant_), ftab, nblock, verb, &budget );
       if (verb >= 3)
          VPrintf3 ( "      %d work, %d block, ratio %5.2f\n",
                     budgetInit - budget,

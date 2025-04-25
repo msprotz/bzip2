@@ -3,6 +3,7 @@
 #![allow(non_camel_case_types)]
 #![allow(unused_assignments)]
 #![allow(unreachable_patterns)]
+#![allow(unused_mut)]
 
 pub fn BZ2_bsInitWrite(s: &mut [crate::bzlib_private::EState])
 {
@@ -22,8 +23,8 @@ pub fn BZ2_compressBlock(s: &mut [crate::bzlib_private::EState], is_last_block: 
     if (s[0usize]).verbosity >= 2i32 { () };
     crate::blocksort::BZ2_blockSort(s)
   };
-  let arr2_8: &mut [u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
-  (s[0usize]).zbits = &mut arr2_8[(s[0usize]).nblock as usize..];
+  let arr2_8: &[u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
+  (s[0usize]).zbits = &arr2_8[(s[0usize]).nblock as usize..];
   if (s[0usize]).blockNo == 1i32
   {
     BZ2_bsInitWrite(s);
@@ -910,7 +911,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
     }
   };
   {
-    let mut pos: [u8; 6];
+    let mut pos: [u8; 6] = [0u8; 6usize];
     let mut ll_i: u8;
     let mut tmp2: u8;
     let mut tmp: u8;
@@ -979,7 +980,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
     }
   };
   {
-    let mut inUse16: [u8; 16];
+    let mut inUse16: [u8; 16] = [0u8; 16usize];
     {
       i = 0i32;
       while
