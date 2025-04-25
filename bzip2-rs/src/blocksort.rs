@@ -1104,25 +1104,34 @@ pub fn mainSort(
     {
       {
         quadrant[i as usize] = 0u16;
-        j = j.wrapping_shr(8u32) | (block[i as usize] as u16).wrapping_shl(8u32) as i32;
+        j =
+            (j.wrapping_shr(8u32) as u32 | (block[i as usize] as u16).wrapping_shl(8u32) as u32)
+            as
+            i32;
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32);
         quadrant[i.wrapping_sub(1i32) as usize] = 0u16;
         j =
-            j.wrapping_shr(8u32)
+            (j.wrapping_shr(8u32) as u32
             |
-            (block[i.wrapping_sub(1i32) as usize] as u16).wrapping_shl(8u32) as i32;
+            (block[i.wrapping_sub(1i32) as usize] as u16).wrapping_shl(8u32) as u32)
+            as
+            i32;
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32);
         quadrant[i.wrapping_sub(2i32) as usize] = 0u16;
         j =
-            j.wrapping_shr(8u32)
+            (j.wrapping_shr(8u32) as u32
             |
-            (block[i.wrapping_sub(2i32) as usize] as u16).wrapping_shl(8u32) as i32;
+            (block[i.wrapping_sub(2i32) as usize] as u16).wrapping_shl(8u32) as u32)
+            as
+            i32;
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32);
         quadrant[i.wrapping_sub(3i32) as usize] = 0u16;
         j =
-            j.wrapping_shr(8u32)
+            (j.wrapping_shr(8u32) as u32
             |
-            (block[i.wrapping_sub(3i32) as usize] as u16).wrapping_shl(8u32) as i32;
+            (block[i.wrapping_sub(3i32) as usize] as u16).wrapping_shl(8u32) as u32)
+            as
+            i32;
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32)
       };
       i = i.wrapping_sub(4i32)
@@ -1134,7 +1143,10 @@ pub fn mainSort(
     {
       {
         quadrant[i as usize] = 0u16;
-        j = j.wrapping_shr(8u32) | (block[i as usize] as u16).wrapping_shl(8u32) as i32;
+        j =
+            (j.wrapping_shr(8u32) as u32 | (block[i as usize] as u16).wrapping_shl(8u32) as u32)
+            as
+            i32;
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32)
       };
       i = i.wrapping_sub(1i32)

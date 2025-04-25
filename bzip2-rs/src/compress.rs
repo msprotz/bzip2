@@ -78,10 +78,10 @@ pub fn bsPutUChar(s: &mut [crate::bzlib_private::EState], c: u8) { bsW(s, 8i32, 
 
 pub fn bsPutUInt32(s: &mut [crate::bzlib_private::EState], u: u32)
 {
-  bsW(s, 8i32, u.wrapping_shr(24u32) & 255u32);
-  bsW(s, 8i32, u.wrapping_shr(16u32) & 255u32);
-  bsW(s, 8i32, u.wrapping_shr(8u32) & 255u32);
-  bsW(s, 8i32, u & 255u32)
+  bsW(s, 8i32, (u.wrapping_shr(24u32) as u64 & 255u64) as u32);
+  bsW(s, 8i32, (u.wrapping_shr(16u32) as u64 & 255u64) as u32);
+  bsW(s, 8i32, (u.wrapping_shr(8u32) as u64 & 255u64) as u32);
+  bsW(s, 8i32, (u as u64 & 255u64) as u32)
 }
 
 #[inline] pub fn bsW(s: &mut [crate::bzlib_private::EState], n: i32, v: u32)
@@ -813,7 +813,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
             while
             t < nGroups
             {
-              if cost[t as usize] < bc as u16
+              if (cost[t as usize] as u32) < bc as u32
               {
                 bc = cost[t as usize] as i32;
                 bt = t
@@ -1520,9 +1520,9 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
           i < alphaSize
           {
             {
-              if (s[0usize]).len[t as usize][i as usize] > maxLen as u8
+              if (s[0usize]).len[t as usize][i as usize] as u32 > maxLen as u32
               { maxLen = (s[0usize]).len[t as usize][i as usize] as i32 };
-              if (s[0usize]).len[t as usize][i as usize] < minLen as u8
+              if ((s[0usize]).len[t as usize][i as usize] as u32) < minLen as u32
               { minLen = (s[0usize]).len[t as usize][i as usize] as i32 }
             };
             i = i.wrapping_add(1i32)
@@ -1605,7 +1605,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
         {
           j = 0i32;
           while
-          j < (s[0usize]).selectorMtf[i as usize] as i32
+          (j as u32) < (s[0usize]).selectorMtf[i as usize] as u32
           {
             bsW(s, 1i32, 1u32);
             j = j.wrapping_add(1i32)
@@ -1632,13 +1632,13 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
         {
           {
             while
-            curr < (s[0usize]).len[t as usize][i as usize] as i32
+            (curr as u32) < (s[0usize]).len[t as usize][i as usize] as u32
             {
               bsW(s, 2i32, 2u32);
               curr = curr.wrapping_add(1i32)
             };
             while
-            curr > (s[0usize]).len[t as usize][i as usize] as i32
+            curr as u32 > (s[0usize]).len[t as usize][i as usize] as u32
             {
               bsW(s, 2i32, 3u32);
               curr = curr.wrapping_sub(1i32)

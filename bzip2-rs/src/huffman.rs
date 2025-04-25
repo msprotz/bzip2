@@ -27,7 +27,7 @@ pub fn BZ2_hbAssignCodes(
         while
         i < alphaSize
         {
-          if length[i as usize] == n as u8
+          if length[i as usize] as u32 == n as u32
           {
             code[i as usize] = vec;
             vec = vec.wrapping_add(1i32)
@@ -66,7 +66,7 @@ pub fn BZ2_hbCreateDecodeTables(
         while
         j < alphaSize
         {
-          if length[j as usize] == i as u8
+          if length[j as usize] as u32 == i as u32
           {
             perm[pp as usize] = j;
             pp = pp.wrapping_add(1i32)
@@ -91,8 +91,8 @@ pub fn BZ2_hbCreateDecodeTables(
     while
     i < alphaSize
     {
-      base[(length[i as usize]).wrapping_add(1u8) as usize] =
-          (base[(length[i as usize]).wrapping_add(1u8) as usize]).wrapping_add(1i32);
+      base[(length[i as usize] as u32).wrapping_add(1u32) as usize] =
+          (base[(length[i as usize] as u32).wrapping_add(1u32) as usize]).wrapping_add(1i32);
       i = i.wrapping_add(1i32)
     }
   };
@@ -254,14 +254,20 @@ pub fn BZ2_hbMakeCodeLengths(len: &mut [u8], freq: &[i32], alphaSize: i32, maxLe
         parent[n2 as usize] = nNodes
       };
       weight[nNodes as usize] =
-          (weight[n1 as usize] & 4294967040i32).wrapping_add(weight[n2 as usize] & 4294967040i32)
+          ((weight[n1 as usize] as u32 & 4294967040u32).wrapping_add(
+            weight[n2 as usize] as u32 & 4294967040u32
+          )
           |
           1i32.wrapping_add(
             if weight[n1 as usize] & 255i32 > weight[n2 as usize] & 255i32
             { weight[n1 as usize] & 255i32 }
             else
             { weight[n2 as usize] & 255i32 }
-          );
+          )
+          as
+          u32)
+          as
+          i32;
       parent[nNodes as usize] = 0i32.wrapping_sub(1i32);
       nHeap = nHeap.wrapping_add(1i32);
       heap[nHeap as usize] = nNodes;
