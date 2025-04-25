@@ -227,11 +227,13 @@ typedef
       /* aliases for arr1 and arr2 */
       UInt32*  ptr;
       UChar*   block;
-      UInt16*  mtfv;
 
-      // SCYLLA: an index, in bytes, into arr2 seen as an array of bytes (was previously an alias)
-      // UChar*   zbits;
+      // SCYLLA: an index into arr2 seen as an array of bytes
+      // Was previously an alias: UChar*   zbits;
       size_t zbits_ofs;
+
+      // SCYLLA: a view over arr1, but as Uint16s instead of UInt32s
+      // UInt16*  mtfv;
 
       /* for deciding when to use the fallback sorting algorithm */
       Int32    workFactor;

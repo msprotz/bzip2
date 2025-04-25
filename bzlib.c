@@ -199,7 +199,6 @@ int BZ_API(BZ2_bzCompressInit)
    s->workFactor        = workFactor;
 
    s->block             = (UChar*)s->arr2;
-   s->mtfv              = (UInt16*)s->arr1;
    s->zbits_ofs         = 0;
    s->ptr               = (UInt32*)s->arr1;
 

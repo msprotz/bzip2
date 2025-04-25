@@ -112,7 +112,6 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
   makeMaps_e(s);
   let ptr: &[u32] = (s[0usize]).ptr;
   let block: &[u8] = (s[0usize]).block;
-  let mtfv: &mut [u16] = (s[0usize]).mtfv;
   EOB = (s[0usize]).nInUse.wrapping_add(1i32);
   {
     i = 0i32;
@@ -156,13 +155,13 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
             {
               if zPend & 1i32 != 0i32
               {
-                mtfv[wr as usize] = 1u16;
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[wr as usize] = 1u16;
                 wr = wr.wrapping_add(1i32);
                 (s[0usize]).mtfFreq[1usize] = ((s[0usize]).mtfFreq[1usize]).wrapping_add(1i32)
               }
               else
               {
-                mtfv[wr as usize] = 0u16;
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[wr as usize] = 0u16;
                 wr = wr.wrapping_add(1i32);
                 (s[0usize]).mtfFreq[0usize] = ((s[0usize]).mtfFreq[0usize]).wrapping_add(1i32)
               };
@@ -189,7 +188,8 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
           };
           yy[0usize] = rtmp;
           j = yy_j as i32;
-          mtfv[wr as usize] = j.wrapping_add(1i32) as u16;
+          crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[wr as usize] =
+              j.wrapping_add(1i32) as u16;
           wr = wr.wrapping_add(1i32);
           (s[0usize]).mtfFreq[j.wrapping_add(1i32) as usize] =
               ((s[0usize]).mtfFreq[j.wrapping_add(1i32) as usize]).wrapping_add(1i32)
@@ -206,13 +206,13 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
     {
       if zPend & 1i32 != 0i32
       {
-        mtfv[wr as usize] = 1u16;
+        crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[wr as usize] = 1u16;
         wr = wr.wrapping_add(1i32);
         (s[0usize]).mtfFreq[1usize] = ((s[0usize]).mtfFreq[1usize]).wrapping_add(1i32)
       }
       else
       {
-        mtfv[wr as usize] = 0u16;
+        crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[wr as usize] = 0u16;
         wr = wr.wrapping_add(1i32);
         (s[0usize]).mtfFreq[0usize] = ((s[0usize]).mtfFreq[0usize]).wrapping_add(1i32)
       };
@@ -221,7 +221,7 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
     };
     zPend = 0i32
   };
-  mtfv[wr as usize] = EOB as u16;
+  crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[wr as usize] = EOB as u16;
   wr = wr.wrapping_add(1i32);
   (s[0usize]).mtfFreq[EOB as usize] = ((s[0usize]).mtfFreq[EOB as usize]).wrapping_add(1i32);
   (s[0usize]).nMTF = wr
@@ -256,7 +256,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
   let mut bt: i32;
   let mut bc: i32;
   let mut iter: i32;
-  let mut nSelectors: i32;
+  let mut nSelectors: i32 = 0i32;
   let mut alphaSize: i32;
   let mut minLen: i32;
   let mut maxLen: i32;
@@ -265,7 +265,6 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
   let mut nBytes: i32;
   let mut cost: [u16; 6] = [0u16; 6usize];
   let mut fave: [i32; 6] = [0i32; 6usize];
-  let mtfv: &[u16] = (s[0usize]).mtfv;
   if (s[0usize]).verbosity >= 3i32 { () };
   alphaSize = (s[0usize]).nInUse.wrapping_add(2i32);
   {
@@ -428,203 +427,353 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
               cost23 = 0u32;
               cost45 = 0u32
             };
-            icv = mtfv[gs.wrapping_add(0i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(0i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(1i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(1i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(2i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(2i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(3i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(3i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(4i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(4i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(5i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(5i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(6i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(6i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(7i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(7i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(8i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(8i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(9i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(9i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(10i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(10i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(11i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(11i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(12i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(12i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(13i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(13i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(14i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(14i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(15i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(15i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(16i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(16i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(17i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(17i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(18i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(18i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(19i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(19i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(20i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(20i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(21i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(21i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(22i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(22i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(23i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(23i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(24i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(24i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(25i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(25i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(26i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(26i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(27i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(27i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(28i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(28i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(29i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(29i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(30i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(30i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(31i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(31i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(32i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(32i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(33i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(33i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(34i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(34i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(35i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(35i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(36i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(36i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(37i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(37i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(38i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(38i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(39i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(39i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(40i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(40i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(41i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(41i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(42i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(42i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(43i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(43i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(44i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(44i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(45i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(45i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(46i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(46i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(47i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(47i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(48i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(48i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
-            icv = mtfv[gs.wrapping_add(49i32) as usize];
+            icv =
+                crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(49i32)
+                as
+                usize];
             cost01 = cost01.wrapping_add((s[0usize]).len_pack[icv as usize][0usize]);
             cost23 = cost23.wrapping_add((s[0usize]).len_pack[icv as usize][1usize]);
             cost45 = cost45.wrapping_add((s[0usize]).len_pack[icv as usize][2usize]);
@@ -642,7 +791,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
             i <= ge
             {
               {
-                let icv: u16 = mtfv[i as usize];
+                let icv: u16 = crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[i as usize];
                 t = 0i32;
                 while
                 t < nGroups
@@ -678,206 +827,606 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
           nSelectors = nSelectors.wrapping_add(1i32);
           if nGroups == 6i32 && 50i32 == ge.wrapping_sub(gs).wrapping_add(1i32)
           {
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(0i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(0i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(1i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(1i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(2i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(2i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(3i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(3i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(4i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(4i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(5i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(5i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(6i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(6i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(7i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(7i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(8i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(8i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(9i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(9i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(10i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(10i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(11i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(11i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(12i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(12i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(13i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(13i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(14i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(14i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(15i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(15i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(16i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(16i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(17i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(17i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(18i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(18i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(19i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(19i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(20i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(20i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(21i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(21i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(22i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(22i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(23i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(23i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(24i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(24i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(25i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(25i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(26i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(26i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(27i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(27i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(28i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(28i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(29i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(29i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(30i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(30i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(31i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(31i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(32i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(32i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(33i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(33i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(34i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(34i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(35i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(35i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(36i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(36i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(37i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(37i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(38i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(38i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(39i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(39i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(40i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(40i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(41i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(41i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(42i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(42i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(43i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(43i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(44i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(44i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(45i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(45i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(46i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(46i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(47i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(47i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(48i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(48i32) as usize] as usize]).wrapping_add(
-                  1i32
-                );
-            (s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(49i32) as usize] as usize] =
-                ((s[0usize]).rfreq[bt as usize][mtfv[gs.wrapping_add(49i32) as usize] as usize]).wrapping_add(
-                  1i32
-                )
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              0i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(0i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              1i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(1i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              2i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(2i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              3i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(3i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              4i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(4i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              5i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(5i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              6i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(6i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              7i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(7i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              8i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(8i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              9i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(9i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              10i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(10i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              11i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(11i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              12i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(12i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              13i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(13i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              14i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(14i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              15i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(15i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              16i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(16i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              17i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(17i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              18i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(18i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              19i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(19i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              20i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(20i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              21i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(21i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              22i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(22i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              23i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(23i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              24i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(24i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              25i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(25i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              26i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(26i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              27i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(27i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              28i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(28i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              29i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(29i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              30i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(30i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              31i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(31i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              32i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(32i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              33i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(33i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              34i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(34i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              35i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(35i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              36i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(36i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              37i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(37i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              38i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(38i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              39i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(39i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              40i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(40i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              41i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(41i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              42i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(42i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              43i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(43i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              44i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(44i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              45i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(45i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              46i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(46i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              47i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(47i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              48i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(48i32) as usize]
+                as
+                usize]).wrapping_add(1i32);
+            (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(
+              49i32
+            )
+            as
+            usize]
+            as
+            usize] =
+                ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                  (s[0usize]).arr1
+                )[gs.wrapping_add(49i32) as usize]
+                as
+                usize]).wrapping_add(1i32)
           }
           else
           {
@@ -885,8 +1434,16 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
             while
             i <= ge
             {
-              (s[0usize]).rfreq[bt as usize][mtfv[i as usize] as usize] =
-                  ((s[0usize]).rfreq[bt as usize][mtfv[i as usize] as usize]).wrapping_add(1i32);
+              (s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[i
+              as
+              usize]
+              as
+              usize] =
+                  ((s[0usize]).rfreq[bt as usize][crate::scylla_glue::scylla_u16_of_u32(
+                    (s[0usize]).arr1
+                  )[i as usize]
+                  as
+                  usize]).wrapping_add(1i32);
               i = i.wrapping_add(1i32)
             }
           };
@@ -1106,110 +1663,453 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
     if ge >= (s[0usize]).nMTF { ge = (s[0usize]).nMTF.wrapping_sub(1i32) };
     if nGroups == 6i32 && 50i32 == ge.wrapping_sub(gs).wrapping_add(1i32)
     {
-      let mut mtfv_i: u16;
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(0i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(1i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(2i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(3i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(4i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(5i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(6i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(7i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(8i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(9i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(10i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(11i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(12i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(13i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(14i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(15i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(16i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(17i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(18i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(19i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(20i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(21i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(22i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(23i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(24i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(25i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(26i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(27i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(28i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(29i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(30i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(31i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(32i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(33i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(34i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(35i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(36i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(37i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(38i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(39i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(40i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(41i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(42i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(43i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(44i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(45i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(46i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(47i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      {
+        let mtfv_i: u16 =
+            crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(48i32) as usize];
+        let s_len_sel_selCtr: &[u8] =
+            &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        let s_code_sel_selCtr: &[i32] =
+            &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
+        bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
+      };
+      let mtfv_i: u16 =
+          crate::scylla_glue::scylla_u16_of_u32((s[0usize]).arr1)[gs.wrapping_add(49i32) as usize];
       let s_len_sel_selCtr: &[u8] =
           &(s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
       let s_code_sel_selCtr: &[i32] =
           &(s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][0usize..];
-      mtfv_i = mtfv[gs.wrapping_add(0i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(1i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(2i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(3i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(4i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(5i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(6i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(7i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(8i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(9i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(10i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(11i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(12i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(13i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(14i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(15i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(16i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(17i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(18i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(19i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(20i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(21i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(22i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(23i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(24i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(25i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(26i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(27i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(28i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(29i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(30i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(31i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(32i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(33i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(34i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(35i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(36i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(37i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(38i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(39i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(40i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(41i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(42i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(43i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(44i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(45i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(46i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(47i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(48i32) as usize];
-      bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32);
-      mtfv_i = mtfv[gs.wrapping_add(49i32) as usize];
       bsW(s, s_len_sel_selCtr[mtfv_i as usize] as i32, s_code_sel_selCtr[mtfv_i as usize] as u32)
     }
     else
@@ -1218,15 +2118,25 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
       while
       i <= ge
       {
-        bsW(
-          s,
-          (s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][mtfv[i as usize] as usize]
-          as
-          i32,
-          (s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][mtfv[i as usize] as usize]
-          as
-          u32
-        );
+        {
+          let n: i32 =
+              (s[0usize]).len[(s[0usize]).selector[selCtr as usize] as usize][crate::scylla_glue::scylla_u16_of_u32(
+                (s[0usize]).arr1
+              )[i as usize]
+              as
+              usize]
+              as
+              i32;
+          let v0: u32 =
+              (s[0usize]).code[(s[0usize]).selector[selCtr as usize] as usize][crate::scylla_glue::scylla_u16_of_u32(
+                (s[0usize]).arr1
+              )[i as usize]
+              as
+              usize]
+              as
+              u32;
+          bsW(s, n, v0)
+        };
         i = i.wrapping_add(1i32)
       }
     };

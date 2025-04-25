@@ -20,7 +20,6 @@ struct EState <'a>
   pub origPtr: i32,
   pub ptr: &'a mut [u32],
   pub block: &'a mut [u8],
-  pub mtfv: &'a mut [u16],
   pub zbits_ofs: usize,
   pub workFactor: i32,
   pub state_in_ch: u32,

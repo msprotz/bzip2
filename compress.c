@@ -151,7 +151,7 @@ void generateMTFValues ( EState* s )
    */
    UInt32* ptr   = s->ptr;
    UChar* block  = s->block;
-   UInt16* mtfv  = s->mtfv;
+#define mtfv (MTFV(s))
 
    EOB = s->nInUse+1;
 
@@ -230,6 +230,7 @@ void generateMTFValues ( EState* s )
 
    s->nMTF = wr;
 }
+#undef mtfv
 
 
 /*---------------------------------------------------*/
@@ -240,7 +241,7 @@ static
 void sendMTFValues ( EState* s )
 {
    Int32 v, t, i, j, gs, ge, totc, bt, bc, iter;
-   Int32 nSelectors, alphaSize, minLen, maxLen, selCtr;
+   Int32 nSelectors = 0, alphaSize, minLen, maxLen, selCtr;
    Int32 nGroups, nBytes;
 
    /*--
@@ -257,7 +258,7 @@ void sendMTFValues ( EState* s )
    UInt16 cost[BZ_N_GROUPS];
    Int32  fave[BZ_N_GROUPS];
 
-   UInt16* mtfv = s->mtfv;
+#define mtfv (MTFV(s))
 
    if (s->verbosity >= 3)
       VPrintf3( "      %d in block, %d after MTF & 1-2 coding, "
@@ -554,17 +555,17 @@ void sendMTFValues ( EState* s )
 
       if (nGroups == 6 && 50 == ge-gs+1) {
             /*--- fast track the common case ---*/
-            UInt16 mtfv_i;
-            UChar* s_len_sel_selCtr
-               = &(s->len[s->selector[selCtr]][0]);
-            Int32* s_code_sel_selCtr
-               = &(s->code[s->selector[selCtr]][0]);
 
 #           define BZ_ITAH(nn)                      \
-               mtfv_i = mtfv[gs+(nn)];              \
+            do { \
+                UInt16 mtfv_i = mtfv[gs+(nn)];              \
+            UChar* s_len_sel_selCtr \
+               = &(s->len[s->selector[selCtr]][0]); \
+            Int32* s_code_sel_selCtr \
+               = &(s->code[s->selector[selCtr]][0]); \
                bsW ( s,                             \
                      s_len_sel_selCtr[mtfv_i],      \
-                     s_code_sel_selCtr[mtfv_i] )
+                     s_code_sel_selCtr[mtfv_i] ); } while (0)
 
             BZ_ITAH(0);  BZ_ITAH(1);  BZ_ITAH(2);  BZ_ITAH(3);  BZ_ITAH(4);
             BZ_ITAH(5);  BZ_ITAH(6);  BZ_ITAH(7);  BZ_ITAH(8);  BZ_ITAH(9);
@@ -582,9 +583,11 @@ void sendMTFValues ( EState* s )
       } else {
          /*--- slow version which correctly handles all situations ---*/
          for (i = gs; i <= ge; i++) {
+           Int32 n = s->len  [s->selector[selCtr]] [mtfv[i]];
+           UInt32 v = s->code [s->selector[selCtr]] [mtfv[i]];
             bsW ( s,
-                  s->len  [s->selector[selCtr]] [mtfv[i]],
-                  s->code [s->selector[selCtr]] [mtfv[i]] );
+                  n,
+                  v );
          }
       }
 
@@ -596,6 +599,7 @@ void sendMTFValues ( EState* s )
    if (s->verbosity >= 3)
       VPrintf1( "codes %d\n", s->numZ-nBytes );
 }
+#undef mtfv
 
 
 /*---------------------------------------------------*/
