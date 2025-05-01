@@ -35,10 +35,40 @@ void makeMaps_d ( DState* s )
       }
 }
 
+#define SAVE_STATE \
+   s->save_i           = i; \
+   s->save_j           = j; \
+   s->save_t           = t; \
+   s->save_alphaSize   = alphaSize; \
+   s->save_nGroups     = nGroups; \
+   s->save_nSelectors  = nSelectors; \
+   s->save_EOB         = EOB; \
+   s->save_groupNo     = groupNo; \
+   s->save_groupPos    = groupPos; \
+   s->save_nextSym     = nextSym; \
+   s->save_nblockMAX   = nblockMAX; \
+   s->save_nblock      = nblock; \
+   s->save_es          = es; \
+   s->save_N           = N; \
+   s->save_curr        = curr; \
+   s->save_zt          = zt; \
+   s->save_zn          = zn; \
+   s->save_zvec        = zvec; \
+   s->save_zj          = zj; \
+   s->save_gSel        = gSel; \
+   s->save_gMinlen     = gMinlen; \
+   s->save_gLimit      = gLimit; \
+   s->save_gBase       = gBase; \
+   s->save_gPerm       = gPerm; \
+
+#define RETURN(rrr) \
+{ \
+  SAVE_STATE \
+  return rrr; \
+}
+
 
 /*---------------------------------------------------*/
-#define RETURN(rrr)                               \
-   { retVal = rrr; goto save_state_and_return; };
 
 #define GET_BITS(lll,vvv,nnn)                     \
    case lll: s->state = lll;                      \
@@ -221,7 +251,31 @@ Int32 BZ2_decompress ( DState* s )
 
       GET_UCHAR(BZ_X_BLKHDR_1, uc);
 
-      if (uc == 0x17) goto endhdr_2;
+      if (uc == 0x17) {
+        GET_UCHAR(BZ_X_ENDHDR_2, uc);
+        if (uc != 0x72) RETURN(BZ_DATA_ERROR);
+        GET_UCHAR(BZ_X_ENDHDR_3, uc);
+        if (uc != 0x45) RETURN(BZ_DATA_ERROR);
+        GET_UCHAR(BZ_X_ENDHDR_4, uc);
+        if (uc != 0x38) RETURN(BZ_DATA_ERROR);
+        GET_UCHAR(BZ_X_ENDHDR_5, uc);
+        if (uc != 0x50) RETURN(BZ_DATA_ERROR);
+        GET_UCHAR(BZ_X_ENDHDR_6, uc);
+        if (uc != 0x90) RETURN(BZ_DATA_ERROR);
+
+        s->storedCombinedCRC = 0;
+        GET_UCHAR(BZ_X_CCRC_1, uc);
+        s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
+        GET_UCHAR(BZ_X_CCRC_2, uc);
+        s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
+        GET_UCHAR(BZ_X_CCRC_3, uc);
+        s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
+        GET_UCHAR(BZ_X_CCRC_4, uc);
+        s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
+
+        s->state = BZ_X_IDLE;
+        RETURN(BZ_STREAM_END);
+      }
       if (uc != 0x31) RETURN(BZ_DATA_ERROR);
       GET_UCHAR(BZ_X_BLKHDR_2, uc);
       if (uc != 0x41) RETURN(BZ_DATA_ERROR);
@@ -583,65 +637,13 @@ Int32 BZ2_decompress ( DState* s )
 
       RETURN(BZ_OK);
 
+     default: AssertH ( False, 4001 );
 
-
-    endhdr_2:
-
-      GET_UCHAR(BZ_X_ENDHDR_2, uc);
-      if (uc != 0x72) RETURN(BZ_DATA_ERROR);
-      GET_UCHAR(BZ_X_ENDHDR_3, uc);
-      if (uc != 0x45) RETURN(BZ_DATA_ERROR);
-      GET_UCHAR(BZ_X_ENDHDR_4, uc);
-      if (uc != 0x38) RETURN(BZ_DATA_ERROR);
-      GET_UCHAR(BZ_X_ENDHDR_5, uc);
-      if (uc != 0x50) RETURN(BZ_DATA_ERROR);
-      GET_UCHAR(BZ_X_ENDHDR_6, uc);
-      if (uc != 0x90) RETURN(BZ_DATA_ERROR);
-
-      s->storedCombinedCRC = 0;
-      GET_UCHAR(BZ_X_CCRC_1, uc);
-      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
-      GET_UCHAR(BZ_X_CCRC_2, uc);
-      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
-      GET_UCHAR(BZ_X_CCRC_3, uc);
-      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
-      GET_UCHAR(BZ_X_CCRC_4, uc);
-      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | ((UInt32)uc);
-
-      s->state = BZ_X_IDLE;
-      RETURN(BZ_STREAM_END);
-
-      default: AssertH ( False, 4001 );
    }
 
    AssertH ( False, 4002 );
 
-   save_state_and_return:
-
-   s->save_i           = i;
-   s->save_j           = j;
-   s->save_t           = t;
-   s->save_alphaSize   = alphaSize;
-   s->save_nGroups     = nGroups;
-   s->save_nSelectors  = nSelectors;
-   s->save_EOB         = EOB;
-   s->save_groupNo     = groupNo;
-   s->save_groupPos    = groupPos;
-   s->save_nextSym     = nextSym;
-   s->save_nblockMAX   = nblockMAX;
-   s->save_nblock      = nblock;
-   s->save_es          = es;
-   s->save_N           = N;
-   s->save_curr        = curr;
-   s->save_zt          = zt;
-   s->save_zn          = zn;
-   s->save_zvec        = zvec;
-   s->save_zj          = zj;
-   s->save_gSel        = gSel;
-   s->save_gMinlen     = gMinlen;
-   s->save_gLimit      = gLimit;
-   s->save_gBase       = gBase;
-   s->save_gPerm       = gPerm;
+   SAVE_STATE
 
    return retVal;
 }
