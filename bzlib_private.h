@@ -224,9 +224,10 @@ typedef
       UInt32*  ftab;
       Int32    origPtr;
 
-      /* aliases for arr1 and arr2 */
-      UInt32*  ptr;
-      UChar*   block;
+      // SCYLLA: was previously an alias for arr1 (why?)
+      /* UInt32*  ptr; */
+      // SCYLLA: was previously an alias for arr2 (as bytes)
+      /* UChar*   block; */
 
       // SCYLLA: an index into arr2 seen as an array of bytes
       // Was previously an alias: UChar*   zbits;

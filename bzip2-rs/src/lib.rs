@@ -6,3 +6,4 @@ pub mod huffman;
 pub mod compress;
 pub mod crctable;
 pub mod randtable;
+pub mod ffi;

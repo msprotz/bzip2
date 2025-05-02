@@ -167,10 +167,10 @@ void BZ2_hbAssignCodes ( Int32 *code,
 
 
 /*---------------------------------------------------*/
-void BZ2_hbCreateDecodeTables ( Int32 *limit,
-                                Int32 *base,
-                                Int32 *perm,
-                                UChar *length,
+void BZ2_hbCreateDecodeTables ( Int32 *limit, // BZ_MAX_CODE_LEN
+                                Int32 *base, // BZ_MAX_CODE_LEN
+                                Int32 *perm, // (maxLen - minLen + 1) * alphaSize
+                                UChar *length, // alphaSize
                                 Int32 minLen,
                                 Int32 maxLen,
                                 Int32 alphaSize )

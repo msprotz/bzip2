@@ -1032,8 +1032,7 @@ void mainSort ( UInt32* ptr,
 */
 void BZ2_blockSort ( EState* s )
 {
-   UInt32* ptr    = s->ptr;
-   UChar*  block  = s->block;
+   UChar *block = scylla_u8_of_u32(s->arr2);
    UInt32* ftab   = s->ftab;
    Int32   nblock = s->nblock;
    Int32   verb   = s->verbosity;
@@ -1068,7 +1067,7 @@ void BZ2_blockSort ( EState* s )
       budgetInit = nblock * ((wfact-1) / 3);
       budget = budgetInit;
 
-      mainSort ( ptr, block_, scylla_u16_of_u8(quadrant_), ftab, nblock, verb, &budget );
+      mainSort ( s->arr1, block_, scylla_u16_of_u8(quadrant_), ftab, nblock, verb, &budget );
       if (verb >= 3)
          VPrintf3 ( "      %d work, %d block, ratio %5.2f\n",
                     budgetInit - budget,
@@ -1085,7 +1084,7 @@ void BZ2_blockSort ( EState* s )
 
    s->origPtr = -1;
    for (i = 0; i < s->nblock; i++)
-      if (ptr[i] == 0)
+      if (s->arr1[i] == 0)
          { s->origPtr = i; break; };
 
    AssertH( s->origPtr != -1, 1003 );

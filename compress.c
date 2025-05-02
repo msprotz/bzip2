@@ -149,8 +149,8 @@ void generateMTFValues ( EState* s )
       except for the last one, which is arranged in
       compressBlock().
    */
-   UInt32* ptr   = s->ptr;
-   UChar* block  = s->block;
+   /* UInt32* ptr   = s->arr1; */
+   UChar *block = scylla_u8_of_u32(s->arr2);
 #define mtfv (MTFV(s))
 
    EOB = s->nInUse+1;
@@ -164,7 +164,7 @@ void generateMTFValues ( EState* s )
    for (i = 0; i < s->nblock; i++) {
       UChar ll_i;
       AssertD ( wr <= i, "generateMTFValues(1)" );
-      j = ptr[i]-1; if (j < 0) j += s->nblock;
+      j = s->arr1[i]-1; if (j < 0) j += s->nblock;
       ll_i = s->unseqToSeq[block[j]];
       AssertD ( ll_i < s->nInUse, "generateMTFValues(2a)" );
 

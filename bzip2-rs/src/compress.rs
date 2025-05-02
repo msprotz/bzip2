@@ -110,8 +110,7 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
   let mut wr: i32;
   let mut EOB: i32;
   makeMaps_e(s);
-  let ptr: &[u32] = (s[0usize]).ptr;
-  let block: &[u8] = (s[0usize]).block;
+  let block: &[u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
   EOB = (s[0usize]).nInUse.wrapping_add(1i32);
   {
     i = 0i32;
@@ -140,7 +139,7 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
     {
       {
         let mut ll_i: u8;
-        j = (ptr[i as usize]).wrapping_sub(1u32) as i32;
+        j = ((s[0usize]).arr1[i as usize]).wrapping_sub(1u32) as i32;
         if j < 0i32 { j = j.wrapping_add((s[0usize]).nblock) };
         ll_i = (s[0usize]).unseqToSeq[block[j as usize] as usize];
         if yy[0usize] == ll_i

@@ -198,9 +198,7 @@ int BZ_API(BZ2_bzCompressInit)
    s->verbosity         = verbosity;
    s->workFactor        = workFactor;
 
-   s->block             = (UChar*)s->arr2;
    s->zbits_ofs         = 0;
-   s->ptr               = (UInt32*)s->arr1;
 
    strm->state          = s;
    strm->total_in_lo32  = 0;
@@ -223,26 +221,27 @@ void add_pair_to_block ( EState* s )
       BZ_UPDATE_CRC( s->blockCRC, ch );
    }
    s->inUse[s->state_in_ch] = True;
+   UChar *block = scylla_u8_of_u32(s->arr2);
    switch (s->state_in_len) {
       case 1:
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
          break;
       case 2:
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
          break;
       case 3:
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
          break;
       default:
          s->inUse[s->state_in_len-4] = True;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = (UChar)ch; s->nblock++;
-         s->block[s->nblock] = ((UChar)(s->state_in_len-4));
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = (UChar)ch; s->nblock++;
+         block[s->nblock] = ((UChar)(s->state_in_len-4));
          s->nblock++;
          break;
    }
@@ -268,7 +267,7 @@ void flush_RL ( EState* s )
       UChar ch = (UChar)(zs->state_in_ch);        \
       BZ_UPDATE_CRC( zs->blockCRC, ch );          \
       zs->inUse[zs->state_in_ch] = True;          \
-      zs->block[zs->nblock] = (UChar)ch;          \
+      (scylla_u8_of_u32(s->arr2))[zs->nblock] = (UChar)ch;          \
       zs->nblock++;                               \
       zs->state_in_ch = zchh;                     \
    }                                              \

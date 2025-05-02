@@ -7,8 +7,7 @@
 
 pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
 {
-  let ptr: &mut [u32] = (s[0usize]).ptr;
-  let block: &mut [u8] = (s[0usize]).block;
+  let block: &mut [u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
   let ftab: &mut [u32] = (s[0usize]).ftab;
   let nblock: i32 = (s[0usize]).nblock;
   let verb: i32 = (s[0usize]).verbosity;
@@ -29,7 +28,7 @@ pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
     budgetInit = nblock.wrapping_mul(wfact.wrapping_sub(1i32).wrapping_div(3i32));
     budget = budgetInit;
     mainSort(
-      ptr,
+      (s[0usize]).arr1,
       quadrant_.0,
       crate::scylla_glue::scylla_u16_of_u8(quadrant_.1),
       ftab,
@@ -49,7 +48,7 @@ pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
   while
   i < (s[0usize]).nblock
   {
-    if ptr[i as usize] == 0u32
+    if (s[0usize]).arr1[i as usize] == 0u32
     {
       (s[0usize]).origPtr = i;
       break
