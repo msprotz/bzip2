@@ -376,23 +376,17 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
           {
             {
               (s[0usize]).len_pack[v as usize][0usize] =
-                  (((s[0usize]).len[1usize][v as usize]).wrapping_shl(16u32)
+                  ((s[0usize]).len[1usize][v as usize] as i32).wrapping_shl(16u32) as u32
                   |
-                  (s[0usize]).len[0usize][v as usize])
-                  as
-                  u32;
+                  (s[0usize]).len[0usize][v as usize] as u32;
               (s[0usize]).len_pack[v as usize][1usize] =
-                  (((s[0usize]).len[3usize][v as usize]).wrapping_shl(16u32)
+                  ((s[0usize]).len[3usize][v as usize] as i32).wrapping_shl(16u32) as u32
                   |
-                  (s[0usize]).len[2usize][v as usize])
-                  as
-                  u32;
+                  (s[0usize]).len[2usize][v as usize] as u32;
               (s[0usize]).len_pack[v as usize][2usize] =
-                  (((s[0usize]).len[5usize][v as usize]).wrapping_shl(16u32)
+                  ((s[0usize]).len[5usize][v as usize] as i32).wrapping_shl(16u32) as u32
                   |
-                  (s[0usize]).len[4usize][v as usize])
-                  as
-                  u32
+                  (s[0usize]).len[4usize][v as usize] as u32
             };
             v = v.wrapping_add(1i32)
           }

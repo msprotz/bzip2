@@ -5,7 +5,8 @@
 #![allow(unreachable_patterns)]
 #![allow(unused_mut)]
 
-pub const BZ2_rNums: [i32; 512] =
+#[no_mangle]
+pub static BZ2_rNums: [i32; 512] =
     [619i32, 720i32, 127i32, 481i32, 931i32, 816i32, 813i32, 233i32, 566i32, 247i32, 985i32, 724i32,
         205i32, 454i32, 863i32, 491i32, 741i32, 242i32, 949i32, 214i32, 733i32, 859i32, 335i32,
         708i32, 621i32, 574i32, 73i32, 654i32, 730i32, 472i32, 419i32, 436i32, 278i32, 496i32,

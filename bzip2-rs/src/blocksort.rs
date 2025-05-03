@@ -1095,7 +1095,7 @@ pub fn mainSort(
       i = i.wrapping_sub(1i32)
     }
   };
-  j = (block[0usize]).wrapping_shl(8u32) as i32;
+  j = (block[0usize] as i32).wrapping_shl(8u32);
   i = nblock.wrapping_sub(1i32);
   {
     while
@@ -1103,34 +1103,25 @@ pub fn mainSort(
     {
       {
         quadrant[i as usize] = 0u16;
-        j =
-            (j.wrapping_shr(8u32) as u32 | (block[i as usize] as u16).wrapping_shl(8u32) as u32)
-            as
-            i32;
+        j = j.wrapping_shr(8u32) | (block[i as usize] as u16 as i32).wrapping_shl(8u32);
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32);
         quadrant[i.wrapping_sub(1i32) as usize] = 0u16;
         j =
-            (j.wrapping_shr(8u32) as u32
+            j.wrapping_shr(8u32)
             |
-            (block[i.wrapping_sub(1i32) as usize] as u16).wrapping_shl(8u32) as u32)
-            as
-            i32;
+            (block[i.wrapping_sub(1i32) as usize] as u16 as i32).wrapping_shl(8u32);
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32);
         quadrant[i.wrapping_sub(2i32) as usize] = 0u16;
         j =
-            (j.wrapping_shr(8u32) as u32
+            j.wrapping_shr(8u32)
             |
-            (block[i.wrapping_sub(2i32) as usize] as u16).wrapping_shl(8u32) as u32)
-            as
-            i32;
+            (block[i.wrapping_sub(2i32) as usize] as u16 as i32).wrapping_shl(8u32);
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32);
         quadrant[i.wrapping_sub(3i32) as usize] = 0u16;
         j =
-            (j.wrapping_shr(8u32) as u32
+            j.wrapping_shr(8u32)
             |
-            (block[i.wrapping_sub(3i32) as usize] as u16).wrapping_shl(8u32) as u32)
-            as
-            i32;
+            (block[i.wrapping_sub(3i32) as usize] as u16 as i32).wrapping_shl(8u32);
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32)
       };
       i = i.wrapping_sub(4i32)
@@ -1142,10 +1133,7 @@ pub fn mainSort(
     {
       {
         quadrant[i as usize] = 0u16;
-        j =
-            (j.wrapping_shr(8u32) as u32 | (block[i as usize] as u16).wrapping_shl(8u32) as u32)
-            as
-            i32;
+        j = j.wrapping_shr(8u32) | (block[i as usize] as u16 as i32).wrapping_shl(8u32);
         ftab[j as usize] = (ftab[j as usize]).wrapping_add(1u32)
       };
       i = i.wrapping_sub(1i32)
@@ -1173,26 +1161,41 @@ pub fn mainSort(
       i = i.wrapping_add(1i32)
     }
   };
-  s = (block[0usize]).wrapping_shl(8u32) as u16;
+  s = (block[0usize] as i32).wrapping_shl(8u32) as u16;
   i = nblock.wrapping_sub(1i32);
   {
     while
     i >= 3i32
     {
       {
-        s = s.wrapping_shr(8u32) | (block[i as usize]).wrapping_shl(8u32) as u16;
+        s = ((s as i32).wrapping_shr(8u32) | (block[i as usize] as i32).wrapping_shl(8u32)) as u16;
         j = (ftab[s as usize]).wrapping_sub(1u32) as i32;
         ftab[s as usize] = j as u32;
         ptr[j as usize] = i as u32;
-        s = s.wrapping_shr(8u32) | (block[i.wrapping_sub(1i32) as usize]).wrapping_shl(8u32) as u16;
+        s =
+            ((s as i32).wrapping_shr(8u32)
+            |
+            (block[i.wrapping_sub(1i32) as usize] as i32).wrapping_shl(8u32))
+            as
+            u16;
         j = (ftab[s as usize]).wrapping_sub(1u32) as i32;
         ftab[s as usize] = j as u32;
         ptr[j as usize] = i.wrapping_sub(1i32) as u32;
-        s = s.wrapping_shr(8u32) | (block[i.wrapping_sub(2i32) as usize]).wrapping_shl(8u32) as u16;
+        s =
+            ((s as i32).wrapping_shr(8u32)
+            |
+            (block[i.wrapping_sub(2i32) as usize] as i32).wrapping_shl(8u32))
+            as
+            u16;
         j = (ftab[s as usize]).wrapping_sub(1u32) as i32;
         ftab[s as usize] = j as u32;
         ptr[j as usize] = i.wrapping_sub(2i32) as u32;
-        s = s.wrapping_shr(8u32) | (block[i.wrapping_sub(3i32) as usize]).wrapping_shl(8u32) as u16;
+        s =
+            ((s as i32).wrapping_shr(8u32)
+            |
+            (block[i.wrapping_sub(3i32) as usize] as i32).wrapping_shl(8u32))
+            as
+            u16;
         j = (ftab[s as usize]).wrapping_sub(1u32) as i32;
         ftab[s as usize] = j as u32;
         ptr[j as usize] = i.wrapping_sub(3i32) as u32
@@ -1205,7 +1208,7 @@ pub fn mainSort(
     i >= 0i32
     {
       {
-        s = s.wrapping_shr(8u32) | (block[i as usize]).wrapping_shl(8u32) as u16;
+        s = ((s as i32).wrapping_shr(8u32) | (block[i as usize] as i32).wrapping_shl(8u32)) as u16;
         j = (ftab[s as usize]).wrapping_sub(1u32) as i32;
         ftab[s as usize] = j as u32;
         ptr[j as usize] = i as u32
@@ -1366,8 +1369,9 @@ pub fn mainSort(
                 if bigDone[c1 as usize] == 0u8
                 {
                   ptr[{
+                    let old_value: i32 = copyStart[c1 as usize];
                     copyStart[c1 as usize] = (copyStart[c1 as usize]).wrapping_add(1i32);
-                    copyStart[c1 as usize]
+                    old_value
                   }
                   as
                   usize] =
@@ -1393,8 +1397,9 @@ pub fn mainSort(
               if bigDone[c1 as usize] == 0u8
               {
                 ptr[{
+                  let old_value: i32 = copyEnd[c1 as usize];
                   copyEnd[c1 as usize] = (copyEnd[c1 as usize]).wrapping_sub(1i32);
-                  copyEnd[c1 as usize]
+                  old_value
                 }
                 as
                 usize] =
