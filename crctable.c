@@ -28,6 +28,7 @@
   comp.compression FAQ.
 --*/
 
+__attribute__((annotate("scylla_expose")))
 UInt32 BZ2_crc32Table[256] = {
 
    /*-- Ugly, innit? --*/
