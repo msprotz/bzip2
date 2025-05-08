@@ -17,7 +17,7 @@ pub fn BZ2_compressBlock(s: &mut [crate::bzlib_private::EState], is_last_block: 
   {
     (s[0usize]).blockCRC = ! (s[0usize]).blockCRC;
     (s[0usize]).combinedCRC =
-        (s[0usize]).combinedCRC.wrapping_shl(1u32) | (s[0usize]).combinedCRC.wrapping_shr(31u32);
+        ((s[0usize]).combinedCRC).wrapping_shl(1u32) | ((s[0usize]).combinedCRC).wrapping_shr(31u32);
     (s[0usize]).combinedCRC ^= (s[0usize]).blockCRC;
     if (s[0usize]).blockNo > 1i32 { (s[0usize]).numZ = 0i32 };
     if (s[0usize]).verbosity >= 2i32 { () };
@@ -67,10 +67,10 @@ pub fn bsFinishWrite(s: &mut [crate::bzlib_private::EState])
   {
     let zbits: &mut [u8] =
         &mut crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2)[(s[0usize]).zbits_ofs..];
-    zbits[(s[0usize]).numZ as usize] = (s[0usize]).bsBuff.wrapping_shr(24u32) as u8;
-    (s[0usize]).numZ = (s[0usize]).numZ.wrapping_add(1i32);
-    (s[0usize]).bsBuff = (s[0usize]).bsBuff.wrapping_shl(8u32);
-    (s[0usize]).bsLive = (s[0usize]).bsLive.wrapping_sub(8i32)
+    zbits[(s[0usize]).numZ as usize] = ((s[0usize]).bsBuff).wrapping_shr(24u32) as u8;
+    (s[0usize]).numZ = ((s[0usize]).numZ).wrapping_add(1i32);
+    (s[0usize]).bsBuff = ((s[0usize]).bsBuff).wrapping_shl(8u32);
+    (s[0usize]).bsLive = ((s[0usize]).bsLive).wrapping_sub(8i32)
   }
 }
 
@@ -91,14 +91,14 @@ pub fn bsPutUInt32(s: &mut [crate::bzlib_private::EState], u: u32)
   {
     let zbits: &mut [u8] =
         &mut crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2)[(s[0usize]).zbits_ofs..];
-    zbits[(s[0usize]).numZ as usize] = (s[0usize]).bsBuff.wrapping_shr(24u32) as u8;
-    (s[0usize]).numZ = (s[0usize]).numZ.wrapping_add(1i32);
-    (s[0usize]).bsBuff = (s[0usize]).bsBuff.wrapping_shl(8u32);
-    (s[0usize]).bsLive = (s[0usize]).bsLive.wrapping_sub(8i32)
+    zbits[(s[0usize]).numZ as usize] = ((s[0usize]).bsBuff).wrapping_shr(24u32) as u8;
+    (s[0usize]).numZ = ((s[0usize]).numZ).wrapping_add(1i32);
+    (s[0usize]).bsBuff = ((s[0usize]).bsBuff).wrapping_shl(8u32);
+    (s[0usize]).bsLive = ((s[0usize]).bsLive).wrapping_sub(8i32)
   };
   (s[0usize]).bsBuff |=
       v.wrapping_shl(32i32.wrapping_sub((s[0usize]).bsLive).wrapping_sub(n) as u32);
-  (s[0usize]).bsLive = (s[0usize]).bsLive.wrapping_add(n)
+  (s[0usize]).bsLive = ((s[0usize]).bsLive).wrapping_add(n)
 }
 
 pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
@@ -111,7 +111,7 @@ pub fn generateMTFValues(s: &mut [crate::bzlib_private::EState])
   let mut EOB: i32;
   makeMaps_e(s);
   let block: &[u8] = crate::scylla_glue::scylla_u8_of_u32((s[0usize]).arr2);
-  EOB = (s[0usize]).nInUse.wrapping_add(1i32);
+  EOB = ((s[0usize]).nInUse).wrapping_add(1i32);
   {
     i = 0i32;
     while
@@ -237,7 +237,7 @@ pub fn makeMaps_e(s: &mut [crate::bzlib_private::EState])
     if (s[0usize]).inUse[i as usize] != 0u8
     {
       (s[0usize]).unseqToSeq[i as usize] = (s[0usize]).nInUse as u8;
-      (s[0usize]).nInUse = (s[0usize]).nInUse.wrapping_add(1i32)
+      (s[0usize]).nInUse = ((s[0usize]).nInUse).wrapping_add(1i32)
     };
     i = i.wrapping_add(1i32)
   }
@@ -265,7 +265,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
   let mut cost: [u16; 6] = [0u16; 6usize];
   let mut fave: [i32; 6] = [0i32; 6usize];
   if (s[0usize]).verbosity >= 3i32 { () };
-  alphaSize = (s[0usize]).nInUse.wrapping_add(2i32);
+  alphaSize = ((s[0usize]).nInUse).wrapping_add(2i32);
   {
     t = 0i32;
     while
@@ -399,7 +399,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
         {
           if gs >= (s[0usize]).nMTF { break };
           ge = gs.wrapping_add(50i32).wrapping_sub(1i32);
-          if ge >= (s[0usize]).nMTF { ge = (s[0usize]).nMTF.wrapping_sub(1i32) };
+          if ge >= (s[0usize]).nMTF { ge = ((s[0usize]).nMTF).wrapping_sub(1i32) };
           {
             t = 0i32;
             while
@@ -1653,7 +1653,7 @@ pub fn sendMTFValues(s: &mut [crate::bzlib_private::EState])
   {
     if gs >= (s[0usize]).nMTF { break };
     ge = gs.wrapping_add(50i32).wrapping_sub(1i32);
-    if ge >= (s[0usize]).nMTF { ge = (s[0usize]).nMTF.wrapping_sub(1i32) };
+    if ge >= (s[0usize]).nMTF { ge = ((s[0usize]).nMTF).wrapping_sub(1i32) };
     if nGroups == 6i32 && 50i32 == ge.wrapping_sub(gs).wrapping_add(1i32)
     {
       {

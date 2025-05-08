@@ -22,7 +22,7 @@ pub fn BZ2_blockSort(s: &mut [crate::bzlib_private::EState])
     i = nblock.wrapping_add(2i32.wrapping_add(12i32).wrapping_add(18i32).wrapping_add(2i32));
     if i & 1i32 != 0i32 { i = i.wrapping_add(1i32) };
     let block_: (&mut [u8], &mut [u8]) = block.split_at_mut(0usize);
-    let quadrant_: (&mut [u8], &mut [u8]) = block_.1.split_at_mut(i as usize);
+    let quadrant_: (&mut [u8], &mut [u8]) = (block_.1).split_at_mut(i as usize);
     if wfact < 1i32 { wfact = 1i32 };
     if wfact > 100i32 { wfact = 100i32 };
     budgetInit = nblock.wrapping_mul(wfact.wrapping_sub(1i32).wrapping_div(3i32));

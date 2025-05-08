@@ -18,6 +18,7 @@
    in the file LICENSE.
    ------------------------------------------------------------------ */
 
+#include <stdlib.h>
 
 #include "bzlib_private.h"
 #include "scylla_glue.h"
@@ -670,6 +671,9 @@ void mainQSort3 ( UInt32* ptr,
             n = ((Int32)block[ptr[unLo]+d]) - med;
             if (n == 0) {
                mswap(ptr[unLo], ptr[ltLo]);
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "ptr[unLo]=%d\n", ptr[unLo]); */
+/* #endif */
                ltLo++; unLo++; continue;
             };
             if (n >  0) break;
@@ -759,6 +763,9 @@ void mainSort ( UInt32* ptr,
                 Int32   verb,
                 Int32*  budget )
 {
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
    Int32  i, j, k, ss, sb;
    Int32  runningOrder[256];
    Bool   bigDone[256];
@@ -825,12 +832,18 @@ void mainSort ( UInt32* ptr,
       ftab[s] = j;
       ptr[j] = i-3;
    }
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "2 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
    for (; i >= 0; i--) {
       s = (s >> 8) | (block[i] << 8);
       j = ftab[s] -1;
       ftab[s] = j;
       ptr[j] = i;
    }
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "3 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
 
    /*--
       Now ftab contains the first loc of every small bucket.
@@ -907,6 +920,9 @@ void mainSort ( UInt32* ptr,
             ftab[sb] |= SETMASK;
          }
       }
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "4 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
 
       AssertH ( !bigDone[ss], 1006 );
 
@@ -925,16 +941,31 @@ void mainSort ( UInt32* ptr,
          for (j = ftab[ss << 8] & CLEARMASK; j < copyStart[ss]; j++) {
             k = ptr[j]-1; if (k < 0) k += nblock;
             c1 = block[k];
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "4.1 mainSort, ptr[63494]=%d, bigDone[c1]=%d\n", ptr[63494], bigDone[c1]); */
+/* #endif */
             if (!bigDone[c1])
                ptr[ copyStart[c1]++ ] = k;
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "4.2 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
          }
          for (j = (ftab[(ss+1) << 8] & CLEARMASK) - 1; j > copyEnd[ss]; j--) {
             k = ptr[j]-1; if (k < 0) k += nblock;
             c1 = block[k];
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "2 ptr[j]=%d, k=%d, c1=%d\n", ptr[j], k, c1); */
+/* #endif */
             if (!bigDone[c1])
                ptr[ copyEnd[c1]-- ] = k;
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "4.3 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
          }
       }
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "5 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
 
       AssertH ( (copyStart[ss]-1 == copyEnd[ss])
                 ||
@@ -1004,6 +1035,9 @@ void mainSort ( UInt32* ptr,
          }
          AssertH ( ((bbSize-1) >> shifts) <= 65535, 1002 );
       }
+/* #ifndef SCYLLA */
+/*    fprintf(stderr, "6 mainSort, ptr[63494]=%d\n", ptr[63494]); */
+/* #endif */
 
    }
 
@@ -1032,6 +1066,14 @@ void mainSort ( UInt32* ptr,
 */
 void BZ2_blockSort ( EState* s )
 {
+/* #ifndef SCYLLA */
+/*   fprintf(stderr, "[\n"); */
+/*   for (size_t i = 0; i < s->nblock; ++i) { */
+/*     fprintf(stderr, "    0x%08x,\n", s->arr2[i]); */
+/*   } */
+/*   fprintf(stderr, "]\n"); */
+/* #endif */
+
    UChar *block = scylla_u8_of_u32(s->arr2);
    UInt32* ftab   = s->ftab;
    Int32   nblock = s->nblock;
